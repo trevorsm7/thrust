@@ -1,7 +1,7 @@
-# Thrust Branching and Development Model
+# Thrust Development Model
 
-The following is a description of how the Thrust development teams approaches branching and release tagging. This
-is a living document that will evolve as our process evolves.
+The following is a description of the basic development process that CUB follows. This is a living
+document that will evolve as our process evolves.
 
 Thrust is distributed in three ways:
 
@@ -33,8 +33,7 @@ HPC SDK or the CUDA Toolkit.
 Today, Thrust version numbers have a specific [semantic meaning](https://semver.org/).
 Releases prior to 1.10.0 largely, but not strictly, followed these semantic meanings.
 
-The version number for a Thrust release uses the following format:
-`MMM.mmm.ss-ppp`, where:
+The version number for a Thrust release uses the following format: `MMM.mmm.ss-ppp`, where:
 
    * `THRUST_VERSION_MAJOR`/`MMM`: Major version, up to 3 decimal digits. It is incremented
      when the fundamental nature of the library evolves, leading to widespread changes across the
@@ -50,45 +49,7 @@ The version number for a Thrust release uses the following format:
 
 The `<thrust/version.h>` header defines `THRUST_*` macros for all of the version components mentioned
 above. Additionally, a `THRUST_VERSION` macro is defined, which is an integer literal containing all
-of the version components except for `THRUST_PATCH_NUMBER`
-
-## Thrust Releases
-
-| Thrust Release    | Included In                    |
-| ----------------- | ------------------------------ |
-| 1.9.10            | NVIDIA HPC SDK 20.5            |
-| 1.9.9             | CUDA Toolkit 11.0              |
-| 1.9.8-1           | NVIDIA HPC SDK 20.3            |
-| 1.9.8             | CUDA Toolkit 11.0 Early Access |
-| 1.9.7-1           | CUDA Toolkit 10.2 for Tegra    |
-| 1.9.7             | CUDA Toolkit 10.2              |
-| 1.9.6-1           | NVIDIA HPC SDK 20.3            |
-| 1.9.6             | CUDA Toolkit 10.1 Update 2     |
-| 1.9.5             | CUDA Toolkit 10.1 Update 1     |
-| 1.9.4             | CUDA Toolkit 10.1              |
-| 1.9.3             | CUDA Toolkit 10.0              |
-| 1.9.2             | CUDA Toolkit 9.2               |
-| 1.9.1             | CUDA Toolkit 9.1               |
-| 1.9.0             | CUDA Toolkit 9.0               |
-| 1.8.3             | CUDA Toolkit 8.0               |
-| 1.8.2             | CUDA Toolkit 7.5               |
-| 1.8.1             | CUDA Toolkit 7.0               |
-| 1.8.0             |                                |
-| 1.7.2             | CUDA Toolkit 6.5               |
-| 1.7.1             | CUDA Toolkit 6.0               |
-| 1.7.0             | CUDA Toolkit 5.5               |
-| 1.6.0             |                                |
-| 1.5.3             | CUDA Toolkit 5.0               |
-| 1.5.2             | CUDA Toolkit 4.2               |
-| 1.5.1             | CUDA Toolkit 4.1               |
-| 1.5.0             |                                |
-| 1.4.0             | CUDA Toolkit 4.0               |
-| 1.3.0             | CUDA Toolkit 3.2               |
-| 1.2.1             | CUDA Toolkit 3.1               |
-| 1.2.0             |                                |
-| 1.1.1             |                                |
-| 1.1.0             |                                |
-| 1.0.0             |                                |
+of the version components except for `THRUST_PATCH_NUMBER`.
 
 ## Branches and Tags
 
