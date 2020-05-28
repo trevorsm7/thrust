@@ -87,9 +87,9 @@ namespace thrust
  *  \see make_transform_output_iterator
  */
 
-template <typename UnaryFunction, typename OutputIterator>
+template <typename ForwardTransform, typename ReverseTransform, typename Iterator>
   class transform_output_iterator
-    : public detail::transform_output_iterator_base<UnaryFunction, OutputIterator>::type
+    : public detail::transform_output_iterator_base<ForwardTransform, ReverseTransform, Iterator>::type
 {
 
   /*! \cond
@@ -98,7 +98,7 @@ template <typename UnaryFunction, typename OutputIterator>
   public:
 
     typedef typename
-    detail::transform_output_iterator_base<UnaryFunction, OutputIterator>::type
+    detail::transform_output_iterator_base<ForwardTransform, ReverseTransform, Iterator>::type
     super_t;
 
     friend class thrust::iterator_core_access;
@@ -114,7 +114,7 @@ template <typename UnaryFunction, typename OutputIterator>
    *            this \p transform_output_iterator.
    */
     __host__ __device__
-    transform_output_iterator(OutputIterator const& out, UnaryFunction fun) : super_t(out), fun(fun)
+    transform_output_iterator(Iterator const& inout, ForwardTransform forward, ReverseTransform reverse) : super_t(out), forward(forward), reverse(reverse)
     {
     }
 
@@ -126,11 +126,12 @@ template <typename UnaryFunction, typename OutputIterator>
     typename super_t::reference dereference() const
     {
       return detail::transform_output_iterator_proxy<
-        UnaryFunction, OutputIterator
-      >(this->base_reference(), fun);
+        ForwardTransform, ReverseTransform, Iterator
+      >(this->base_reference(), forward, reverse);
     }
 
-    UnaryFunction fun;
+    ForwardTransform forward;
+    ReverseTransform reverse;
 
     /*! \endcond
      */
@@ -145,12 +146,12 @@ template <typename UnaryFunction, typename OutputIterator>
  *            \c out by the newly created \p transform_output_iterator
  *  \see transform_output_iterator
  */
-template <typename UnaryFunction, typename OutputIterator>
-transform_output_iterator<UnaryFunction, OutputIterator>
+template <typename ForwardTransform, typename ReverseTransform, typename Iterator>
+transform_output_iterator<ForwardTransform, ReverseTransform, Iterator>
 __host__ __device__
-make_transform_output_iterator(OutputIterator out, UnaryFunction fun)
+make_transform_output_iterator(Iterator inout, ForwardTransform forward, ReverseTransform reverse)
 {
-    return transform_output_iterator<UnaryFunction, OutputIterator>(out, fun);
+    return transform_output_iterator<ForwardTransform, ReverseTransform, Iterator>(inout, forward, reverse);
 } // end make_transform_output_iterator
 
 /*! \} // end fancyiterators

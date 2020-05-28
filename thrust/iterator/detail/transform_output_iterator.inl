@@ -20,7 +20,8 @@
 namespace thrust
 {
 
-template <typename OutputIterator, typename UnaryFunction>
+// NOTE there was a typo in the order of template parameters name here
+template <typename ForwardTransform, typename ReverseTransform, typename Iterator>
   class transform_output_iterator;
 
 namespace detail 
@@ -28,13 +29,20 @@ namespace detail
 
 // Proxy reference that uses Unary Functiont o transform the rhs of assigment
 // operator before writing the result to OutputIterator
-template <typename UnaryFunction, typename OutputIterator>
+template <typename ForwardTransform, typename ReverseTransform, typename Iterator>
   class transform_output_iterator_proxy
 {
   public:
     __host__ __device__
-    transform_output_iterator_proxy(const OutputIterator& out, UnaryFunction fun) : out(out), fun(fun)
+    transform_output_iterator_proxy(const Iterator& inout, ForwardTransform forward, ReverseTransform reverse) : inout(inout), forward(forward), reverse(reverse)
     {
+    }
+
+    __thrust_exec_check_disable__
+    template <typename T>
+    __host__ __device__
+    operator T const() const {
+      return forward(*inout);
     }
 
     __thrust_exec_check_disable__
@@ -42,35 +50,45 @@ template <typename UnaryFunction, typename OutputIterator>
     __host__ __device__
     transform_output_iterator_proxy operator=(const T& x)
     {
-      *out = fun(x);
+      *inout = reverse(x);
+      return *this;
+    }
+
+    __thrust_exec_check_disable__
+    __host__ __device__
+    transform_output_iterator_proxy operator=(const transform_output_iterator_proxy& x)
+    {
+      *inout = reverse(x);
       return *this;
     }
 
   private:
-    OutputIterator out;
-    UnaryFunction fun;
+    Iterator inout;
+    ForwardTransform forward;
+    ReverseTransform reverse;
 };
 
 // Compute the iterator_adaptor instantiation to be used for transform_output_iterator
-template <typename UnaryFunction, typename OutputIterator>
+template <typename ForwardTransform, typename ReverseTransform, typename Iterator>
 struct transform_output_iterator_base
 {
     typedef thrust::iterator_adaptor
     <
-        transform_output_iterator<UnaryFunction, OutputIterator>
-      , OutputIterator
+        transform_output_iterator<ForwardTransform, ReverseTransform, Iterator>
+      , Iterator
+      , typename std::result_of<ForwardTransform(typename std::iterator_traits<Iterator>::value_type)>::type
       , thrust::use_default
       , thrust::use_default
-      , thrust::use_default
-      , transform_output_iterator_proxy<UnaryFunction, OutputIterator>
+      , transform_output_iterator_proxy<ForwardTransform, ReverseTransform, Iterator>
     > type;
 };
 
 // Register trasnform_output_iterator_proxy with 'is_proxy_reference' from
 // type_traits to enable its use with algorithms.
-template <class OutputIterator, class UnaryFunction>
+// NOTE there was a typo in the order of template parameters name here
+template <typename ForwardTransform, typename ReverseTransform, typename Iterator>
 struct is_proxy_reference<
-    transform_output_iterator_proxy<OutputIterator, UnaryFunction> >
+    transform_output_iterator_proxy<ForwardTransform, ReverseTransform, Iterator> >
     : public thrust::detail::true_type {};
 
 } // end detail
